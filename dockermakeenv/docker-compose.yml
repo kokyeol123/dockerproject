@@ -12,12 +12,13 @@ services:
       - static_volume:/code/staticfiles # <-- bind the static volume
     stdin_open: true
     tty: true
-    command: gunicorn --bind :8000 config.wsgi:application
+    command: gunicorn --bind :8000 config.wsgi:application --reload
     networks:
       - backend_network
     environment:
       - CHOKIDAR_USEPOLLING=true
       - DJANGO_SETTINGS_MODULE=config.local_settings
+      - PYTHONUNBUFFERED=1
     depends_on:
       - db
 
@@ -58,6 +59,7 @@ services:
     image: node:16.14.2
     volumes:
       - ./frontend/web-front:/home/app/frontend
+      - frontend_node_modules:/home/app/frontend/node_modules
     ports:
       - 3000:3000
     working_dir: /home/app/frontend
@@ -86,5 +88,8 @@ networks:
     driver: bridge
 volumes:
   static_volume:
+  frontend_node_modules:
+    driver: local
+
 
     
